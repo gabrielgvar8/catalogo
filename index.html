@@ -12,67 +12,91 @@
     .galeria img { width: 100px; height: auto; border-radius: 6px; cursor: pointer; }
     .producto h2 { font-size: 18px; margin: 10px 0; }
     .producto p { margin: 5px 0; }
-/* Fondo oscuro del lightbox */
-.lightbox {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.8);
-  display: none; /* oculto por defecto */
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
 
-/* Imagen ampliada */
-.lightbox img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 8px;
-  box-shadow: 0 0 15px rgba(255,255,255,0.5);
-  cursor: zoom-out;
-}
+    /* Fondo oscuro del lightbox */
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: none; /* oculto por defecto */
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    /* Imagen ampliada */
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.5);
+      cursor: zoom-out;
+    }
   </style>
 </head>
 <body>
   <h1>Catálogo de Ropa</h1>
   <div id="catalogo" class="catalogo"></div>
 
+  <!-- Contenedor del lightbox -->
+  <div id="lightbox" class="lightbox">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script>
-Papa.parse("productos.csv", {
-  download: true,
-  header: true,
-  complete: function(results) {
-    const contenedor = document.getElementById("catalogo");
-    results.data.forEach(p => {
-      if(p.Titulo){
-        const div = document.createElement("div");
-        div.className = "producto";
+    Papa.parse("productos.csv", {
+      download: true,
+      header: true,
+      complete: function(results) {
+        const contenedor = document.getElementById("catalogo");
+        results.data.forEach(p => {
+          if(p.Titulo){
+            const div = document.createElement("div");
+            div.className = "producto";
 
-        // dividir las imágenes por coma
-        const imagenes = p.Imagen.replace(/"/g, "").split(",");
-        let galeriaHTML = "<div class='galeria'>";
-        imagenes.forEach(img => {
-          galeriaHTML += `<img src="${img.trim()}" alt="${p.Titulo}">`;
+            // dividir las imágenes por coma
+            const imagenes = p.Imagen.replace(/"/g, "").split(",");
+            let galeriaHTML = "<div class='galeria'>";
+            imagenes.forEach(img => {
+              galeriaHTML += `<img src="${img.trim()}" alt="${p.Titulo}">`;
+            });
+            galeriaHTML += "</div>";
+
+            div.innerHTML = `
+              <h2>${p.Titulo}</h2>
+              <p><strong>Precio:</strong> $${p.Precio}</p>
+              <p><strong>Disponibilidad:</strong> ${p.Disponibilidad}</p>
+              <p>${p.Descripcion}</p>
+              ${galeriaHTML}
+            `;
+            contenedor.appendChild(div);
+          }
         });
-        galeriaHTML += "</div>";
-
-        div.innerHTML = `
-          <h2>${p.Titulo}</h2>
-          <p><strong>Precio:</strong> $${p.Precio}</p>
-          <p><strong>Disponibilidad:</strong> ${p.Disponibilidad}</p>
-          <p>${p.Descripcion}</p>
-          ${galeriaHTML}
-        `;
-        contenedor.appendChild(div);
       }
     });
-  }
-});
+
+    // Lightbox
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+
+    // Abrir lightbox al hacer clic en una imagen
+    document.addEventListener("click", function(e) {
+      if(e.target.tagName === "IMG" && e.target.closest(".galeria")) {
+        lightbox.style.display = "flex";
+        lightboxImg.src = e.target.src;
+        lightboxImg.alt = e.target.alt;
+      }
+    });
+
+    // Cerrar lightbox solo al hacer clic en el fondo (no en la imagen)
+    lightbox.addEventListener("click", function(e) {
+      if(e.target !== lightboxImg) {
+        lightbox.style.display = "none";
+        lightboxImg.src = "";
+      }
+    });
   </script>
-<div id="lightbox" class="lightbox">
-  <img id="lightbox-img" src="" alt="">
-</div>
 </body>
 </html>
