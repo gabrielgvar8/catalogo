@@ -6,64 +6,76 @@
   <style>
     /* ====== ESTILOS GENERALES ====== */
     body { 
-      font-family: 'Segoe UI', Arial, sans-serif; /* Fuente más moderna */
-      background: #f0f2f5; /* Fondo gris claro */
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f2f5;
       margin: 20px; 
-      color: #333; /* Texto principal */
+      color: #333;
     }
 
     h1 { 
       text-align: center; 
-      color: #444; /* Color del título */
-      font-size: 2.2em; /* Tamaño más grande */
-      margin-bottom: 30px; /* Espacio debajo del título */
+      color: #444;
+      font-size: 2.2em;
+      margin-bottom: 30px;
     }
 
     /* ====== CATÁLOGO EN GRID ====== */
     .catalogo { 
       display: grid; 
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+      grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); 
       gap: 20px; 
     }
 
     /* ====== TARJETAS DE PRODUCTO ====== */
-    .producto { 
-      background: #fff; 
-      padding: 20px; 
-      border-radius: 10px; 
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-      text-align: center; 
-      transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animación */
+    .producto {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    /* Efecto hover: la tarjeta se levanta */
     .producto:hover {
       transform: translateY(-5px);
       box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     }
 
-    /* ====== GALERÍA DE IMÁGENES ====== */
-    .galeria { 
-      display: flex; 
-      overflow-x: auto; 
-      gap: 10px; 
+    /* ====== CARRUSEL CON FLECHAS ====== */
+    .carrusel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       margin-top: 10px;
-      padding-bottom: 5px;
     }
 
-    .galeria img { 
-      width: 100px; 
-      height: auto; 
-      border-radius: 6px; 
-      cursor: pointer; 
-      border: 1px solid #ddd; /* Borde sutil */
-      transition: transform 0.3s ease, border-color 0.3s ease; /* Animación */
+    .carrusel img {
+      width: 250px;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      cursor: pointer;
     }
 
-    /* Efecto hover en imágenes */
-    .galeria img:hover {
-      transform: scale(1.1);
-      border-color: #aaa;
+    .flecha {
+      background: #5150502e;
+      color: rgb(43, 178, 126);
+      border: none;
+      font-size: 20px;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .flecha:hover {
+      background: #8c8c8c;
     }
 
     /* ====== TEXTOS DE PRODUCTO ====== */
@@ -79,7 +91,7 @@
     }
 
     .producto p strong {
-      color: #0078d7; /* Color acento (azul estilo Microsoft) */
+      color: #0078d7;
     }
 
     /* ====== LIGHTBOX ====== */
@@ -88,14 +100,13 @@
       top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(0,0,0,0.8);
-      display: none; /* oculto por defecto */
+      display: none;
       justify-content: center;
       align-items: center;
       z-index: 9999;
-      animation: fadeIn 0.3s ease; /* Animación al aparecer */
+      animation: fadeIn 0.3s ease;
     }
 
-    /* Imagen ampliada */
     .lightbox img {
       max-width: 90%;
       max-height: 90%;
@@ -104,17 +115,15 @@
       cursor: zoom-out;
     }
 
-    /* Animación de entrada */
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
   </style>
-  <!-- Ícono de la pestaña -->
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-  <h1>Catálogo de Ropa</h1>
+  <h1>Catálogo MV Clothing</h1>
   <div id="catalogo" class="catalogo"></div>
 
   <!-- Contenedor del lightbox -->
@@ -122,7 +131,6 @@
     <img id="lightbox-img" src="" alt="">
   </div>
 
-  <!-- Librería para leer CSV -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script>
     /* ====== LECTURA DEL CSV ====== */
@@ -131,47 +139,69 @@
       header: true,
       complete: function(results) {
         const contenedor = document.getElementById("catalogo");
-        results.data.forEach(p => {
+
+        results.data.forEach((p, index) => {
           if(p.Titulo){
             const div = document.createElement("div");
             div.className = "producto";
 
             // dividir las imágenes por coma
-            const imagenes = p.Imagen.replace(/"/g, "").split(",");
-            let galeriaHTML = "<div class='galeria'>";
-            imagenes.forEach(img => {
-              galeriaHTML += `<img src="${img.trim()}" alt="${p.Titulo}">`;
-            });
-            galeriaHTML += "</div>";
+            const imagenes = p.Imagen.replace(/"/g, "").split(",").map(img => img.trim());
+            const idCarrusel = `carrusel-${index}`;
 
-            // contenido de la tarjeta
+            // carrusel con flechas
+            let galeriaHTML = `
+              <div class="carrusel" id="${idCarrusel}">
+                <button class="flecha izq" onclick="cambiarImagen('${idCarrusel}', -1)">◀</button>
+                <img src="${imagenes[0]}" alt="${p.Titulo}" class="imagen-carrusel">
+                <button class="flecha der" onclick="cambiarImagen('${idCarrusel}', 1)">▶</button>
+              </div>
+            `;
+
             div.innerHTML = `
               <h2>${p.Titulo}</h2>
-              <p><strong>Precio:</strong> $${p.Precio}</p>
-              <p><strong>Disponibilidad:</strong> ${p.Disponibilidad}</p>
               <p>${p.Descripcion}</p>
+              <p><strong>Precio:</strong> Bs.${p.Precio}</p>
+              <p><strong>Disponibilidad:</strong> ${p.Disponibilidad}</p>
               ${galeriaHTML}
             `;
+
+            // guardar imágenes en dataset
+            div.dataset.imagenes = JSON.stringify(imagenes);
+            div.dataset.indice = "0";
+
             contenedor.appendChild(div);
           }
         });
       }
     });
 
+    /* ====== FUNCIÓN CAMBIAR IMAGEN ====== */
+    function cambiarImagen(id, direccion) {
+      const carrusel = document.getElementById(id);
+      const tarjeta = carrusel.closest(".producto");
+      const imagenes = JSON.parse(tarjeta.dataset.imagenes);
+      let indice = parseInt(tarjeta.dataset.indice);
+
+      indice = (indice + direccion + imagenes.length) % imagenes.length;
+      tarjeta.dataset.indice = indice;
+
+      const img = carrusel.querySelector(".imagen-carrusel");
+      img.src = imagenes[indice];
+    }
+
     /* ====== LIGHTBOX ====== */
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
 
-    // Abrir lightbox al hacer clic en una imagen
     document.addEventListener("click", function(e) {
-      if(e.target.tagName === "IMG" && e.target.closest(".galeria")) {
+      if(e.target.tagName === "IMG" && e.target.classList.contains("imagen-carrusel")) {
         lightbox.style.display = "flex";
         lightboxImg.src = e.target.src;
         lightboxImg.alt = e.target.alt;
       }
     });
 
-    // Cerrar lightbox solo al hacer clic en el fondo (no en la imagen)
     lightbox.addEventListener("click", function(e) {
       if(e.target !== lightboxImg) {
         lightbox.style.display = "none";
