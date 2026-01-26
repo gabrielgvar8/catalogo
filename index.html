@@ -7,23 +7,97 @@
     /* ====== ESTILOS GENERALES ====== */
     body { 
       font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f0f2f5;
-      margin: 20px; 
+      margin: 0;
       color: #333;
+      background: url("fondo.jpg") no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
     }
 
-    h1 { 
-      text-align: center; 
-      color: #444;
-      font-size: 2.2em;
-      margin-bottom: 30px;
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255,255,255,0.4);
+      z-index: -1;
     }
+
+    /* ====== NAVBAR ====== */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.9);
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .navbar h1 {
+      flex-grow: 1;
+      text-align: center;
+      font-size: 1.8em;
+      color: #444;
+      margin: 0;
+    }
+
+    .navbar a {
+      background: #c3b384;
+      color: #736c30;
+      text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .navbar a:hover {
+      background: #c3b47c5c;
+    }
+    /* ====== BUSCADOR + ORDENAR ====== */
+    .buscador {
+      display: flex;              /* activa flexbox */
+      justify-content: center;    /* centra horizontalmente */
+      align-items: center;        /* alinea verticalmente */
+      gap: 15px;                  /* espacio entre buscador y ordenar */
+      margin: 20px;
+    }
+
+    .buscador input {
+      flex: 1;                    /* ocupa todo el espacio disponible */
+      max-width: 600px;           /* límite máximo para que no se extienda demasiado */
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .buscador select {
+      width: 180px;               /* tamaño fijo */
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+
 
     /* ====== CATÁLOGO EN GRID ====== */
     .catalogo { 
       display: grid; 
       grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); 
       gap: 20px; 
+      padding: 20px;
     }
 
     /* ====== TARJETAS DE PRODUCTO ====== */
@@ -64,8 +138,8 @@
     }
 
     .flecha {
-      background: #5150502e;
-      color: rgb(43, 178, 126);
+      background:  #c3b384 ;
+      color: #736c30;
       border: none;
       font-size: 20px;
       padding: 10px;
@@ -75,7 +149,7 @@
     }
 
     .flecha:hover {
-      background: #8c8c8c;
+      background:  #c3b47c5c;
     }
 
     /* ====== TEXTOS DE PRODUCTO ====== */
@@ -91,7 +165,7 @@
     }
 
     .producto p strong {
-      color: #0078d7;
+      color: #736c30;
     }
 
     /* ====== LIGHTBOX ====== */
@@ -114,23 +188,98 @@
       box-shadow: 0 0 15px rgba(255,255,255,0.5);
       cursor: zoom-out;
     }
+    @media (max-width: 768px) {
+    .catalogo {
+      grid-template-columns: 1fr; /* una sola columna en móviles */
+      }
+
+    .carrusel img {
+      width: 180px;
+      height: 180px;
+      }
+
+    .navbar h1 {
+      font-size: 1.2em;
+      }
+    }
+    @media (max-width: 600px) {
+    .navbar {
+      flex-direction: column;
+      align-items: center;
+      }
+
+    .navbar img {
+      margin-bottom: 5px;
+      }
+
+    .navbar a {
+      margin-top: 5px;
+      padding: 6px 10px;
+      font-size: 14px;
+      }
+    }
 
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    #paginacion { text-align: center; margin: 20px; }
+    #paginacion button {
+      margin: 5px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      background: #c3b384;
+      color: #736c30;
+      cursor: pointer;
+    }
+    #paginacion button:hover { background: #c3b47c5c; }
+    /* Responsive */
+    @media (max-width: 768px) {
+      .catalogo { grid-template-columns: 1fr; }
+      .carrusel img { width: 180px; height: 180px; }
+      .navbar h1 { font-size: 1.2em; }
+    }
+    @media (max-width: 600px) {
+      .navbar { flex-direction: column; align-items: center; }
+      .navbar img { margin-bottom: 5px; }
+      .navbar a { margin-top: 5px; padding: 6px 10px; font-size: 14px; }
+    }
+
   </style>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-  <h1>Catálogo MV Clothing</h1>
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <img src="favicon.ico" alt="Logo">
+    <h1>Catálogo MV Clothing</h1>
+    <a href="https://wa.link/ybhv7u" target="_blank">Ordena aquí</a>
+  </div>
+
+  <!-- BUSCADOR + ORDENAR -->
+  <div class="buscador">
+    <input type="text" id="buscador" placeholder="Busca por prenda, marca, talla, color...">
+    <select id="orden">
+      <option value="titulo">Título</option>
+      <option value="precioAsc">Precio (menor a mayor)</option>
+      <option value="precioDesc">Precio (mayor a menor)</option>
+    </select>
+  </div>
+
+  <!-- CATÁLOGO -->
   <div id="catalogo" class="catalogo"></div>
 
-  <!-- Contenedor del lightbox -->
+  <!-- PAGINACIÓN -->
+  <div id="paginacion"></div>
+
+  <!-- LIGHTBOX -->
   <div id="lightbox" class="lightbox">
     <img id="lightbox-img" src="" alt="">
   </div>
 
+  <!-- Librería para leer CSV -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script>
     /* ====== LECTURA DEL CSV ====== */
@@ -145,11 +294,9 @@
             const div = document.createElement("div");
             div.className = "producto";
 
-            // dividir las imágenes por coma
             const imagenes = p.Imagen.replace(/"/g, "").split(",").map(img => img.trim());
             const idCarrusel = `carrusel-${index}`;
 
-            // carrusel con flechas
             let galeriaHTML = `
               <div class="carrusel" id="${idCarrusel}">
                 <button class="flecha izq" onclick="cambiarImagen('${idCarrusel}', -1)">◀</button>
@@ -166,13 +313,14 @@
               ${galeriaHTML}
             `;
 
-            // guardar imágenes en dataset
             div.dataset.imagenes = JSON.stringify(imagenes);
             div.dataset.indice = "0";
 
             contenedor.appendChild(div);
           }
         });
+        crearPaginacion(document.querySelectorAll(".producto").length);
+        mostrarPagina(1);
       }
     });
 
@@ -208,6 +356,89 @@
         lightboxImg.src = "";
       }
     });
+
+    /* ====== BUSCADOR ====== */
+    const buscador = document.getElementById("buscador");
+    let productosFiltrados = []; // lista dinámica
+
+    buscador.addEventListener("input", function() {
+      const texto = buscador.value.toLowerCase();
+      const productos = Array.from(document.querySelectorAll(".producto"));
+
+      productosFiltrados = productos.filter(prod => {
+        const contenido = prod.innerText.toLowerCase();
+        return contenido.includes(texto);
+      });
+
+      // Ocultar todos primero
+      productos.forEach(p => p.style.display = "none");
+
+      crearPaginacion(productosFiltrados.length);
+      mostrarPagina(1);
+    });
+
+    /* ====== PAGINACIÓN ====== */
+    let productosPorPagina = 12;
+    let paginaActual = 1;
+
+    function mostrarPagina(pagina) {
+      const productos = productosFiltrados.length > 0 
+        ? productosFiltrados 
+        : Array.from(document.querySelectorAll(".producto"));
+
+      // Ocultar todos primero
+      Array.from(document.querySelectorAll(".producto")).forEach(p => p.style.display = "none");
+
+      productos.forEach((p, i) => {
+        if (i >= (pagina-1)*productosPorPagina && i < pagina*productosPorPagina) {
+          p.style.display = "flex";
+        }
+      });
+    }
+
+    function crearPaginacion(totalProductos) {
+      const totalPaginas = Math.ceil(totalProductos / productosPorPagina);
+      const pagDiv = document.getElementById("paginacion");
+      pagDiv.innerHTML = "";
+      for(let i=1; i<=totalPaginas; i++) {
+        const btn = document.createElement("button");
+        btn.innerText = i;
+        btn.onclick = () => { paginaActual = i; mostrarPagina(i); };
+        pagDiv.appendChild(btn);
+      }
+    }
+
+    /* ====== ORDENAR ====== */
+    document.getElementById("orden").addEventListener("change", function() {
+      const criterio = this.value;
+      const contenedor = document.getElementById("catalogo");
+
+      let productos = productosFiltrados.length > 0 
+        ? productosFiltrados 
+        : Array.from(contenedor.children);
+
+      productos.sort((a, b) => {
+        if (criterio === "titulo") {
+          return a.querySelector("h2").innerText.localeCompare(b.querySelector("h2").innerText);
+        } else if (criterio === "precioAsc") {
+          return extraerPrecio(a) - extraerPrecio(b);
+        } else if (criterio === "precioDesc") {
+          return extraerPrecio(b) - extraerPrecio(a);
+        }
+      });
+
+      productos.forEach(p => contenedor.appendChild(p));
+
+      crearPaginacion(productos.length);
+      mostrarPagina(1);
+    });
+
+    function extraerPrecio(elemento) {
+      const precioTexto = Array.from(elemento.querySelectorAll("p"))
+        .find(p => p.innerText.includes("Precio"))
+        .innerText;
+      return parseFloat(precioTexto.replace("Precio:", "").replace("Bs.","").trim());
+    }
   </script>
 </body>
 </html>
