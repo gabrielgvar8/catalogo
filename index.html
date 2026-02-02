@@ -2,10 +2,11 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Catálogo de Ropa</title>
 <style>
   /* ====== ESTILOS GENERALES ====== */
-  body { 
+  body {
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
     color: #333;
@@ -36,66 +37,36 @@
     z-index: 1000;
   }
 
-  .navbar img {
-    width: 40px;
-    height: 40px;
-  }
-
+  .navbar img { width: 40px; height: 40px; }
   .navbar h1 {
-    flex-grow: 1;
-    text-align: center;
-    font-size: 1.8em;
-    color: #444;
-    margin: 0;
+    flex-grow: 1; text-align: center; font-size: 1.8em; color: #444; margin: 0;
   }
-
   .navbar a {
-    background: #c3b384;
-    color: #736c30;
-    text-decoration: none;
-    padding: 8px 15px;
-    border-radius: 6px;
-    font-weight: bold;
+    background: #c3b384; color: #736c30; text-decoration: none;
+    padding: 8px 15px; border-radius: 6px; font-weight: bold;
     transition: background 0.3s ease;
   }
-
-  .navbar a:hover {
-    background: #c3b47c5c;
-  }
+  .navbar a:hover { background: #c3b47c5c; }
 
   /* ====== BUSCADOR + ORDENAR ====== */
   .buscador {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin: 20px;
+    display: flex; justify-content: center; align-items: center;
+    gap: 15px; margin: 20px;
   }
-
   .buscador input {
-    flex: 1;
-    max-width: 600px;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
+    flex: 1; max-width: 600px; padding: 12px; border: 1px solid #ccc;
+    border-radius: 6px; font-size: 16px;
   }
-
   .buscador select {
-    width: 180px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 15px;
-    background: #fff;
-    cursor: pointer;
+    width: 180px; padding: 10px; border: 1px solid #ccc;
+    border-radius: 6px; font-size: 15px; background: #fff; cursor: pointer;
   }
 
   /* ====== CATÁLOGO EN GRID ====== */
-  .catalogo { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(600px, 1fr)); 
-    gap: 20px; 
+  .catalogo {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+    gap: 20px;
     padding: 20px;
   }
 
@@ -107,10 +78,11 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     text-align: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    height: 400px;
+    min-height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-items: stretch;
   }
 
   .producto:hover {
@@ -125,6 +97,7 @@
     justify-content: center;
     gap: 10px;
     margin-top: 10px;
+    flex: 0 0 auto;
   }
 
   .carrusel img {
@@ -134,10 +107,11 @@
     border-radius: 6px;
     box-shadow: 0 0 5px rgba(0,0,0,0.1);
     cursor: pointer;
+    display: block;
   }
 
   .flecha {
-    background:  #c3b384 ;
+    background: #c3b384;
     color: #736c30;
     border: none;
     font-size: 20px;
@@ -146,68 +120,81 @@
     cursor: pointer;
     transition: background 0.3s ease;
   }
-
-  .flecha:hover {
-    background:  #c3b47c5c;
-  }
+  .flecha:hover { background: #c3b47c5c; }
 
   /* ====== TEXTOS DE PRODUCTO ====== */
-  .producto h2 { 
-    font-size: 20px; 
-    margin: 10px 0; 
-    color: #222;
+  .producto h2 {
+    font-size: 20px; margin: 10px 0; color: #222;
   }
-
-  .producto p { 
-    margin: 5px 0; 
-    font-size: 14px;
-  }
-
-  .producto p strong {
-    color: #736c30;
-  }
+  .producto p { margin: 5px 0; font-size: 14px; }
+  .producto p strong { color: #736c30; }
 
   /* ====== LIGHTBOX ====== */
   .lightbox {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    animation: fadeIn 0.3s ease;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center;
+    z-index: 9999; animation: fadeIn 0.3s ease;
   }
-
   .lightbox img {
-    max-width: 90%;
-    max-height: 90%;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(255,255,255,0.5);
-    cursor: zoom-out;
+    max-width: 90%; max-height: 90%; border-radius: 8px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.5); cursor: zoom-out;
   }
 
   /* ====== PAGINACIÓN ====== */
-  #paginacion { 
-    text-align: center; 
-    margin: 20px; 
-  }
-
+  #paginacion { text-align: center; margin: 20px; }
   #paginacion button {
-    margin: 5px;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    background: #c3b384;
-    color: #736c30;
-    cursor: pointer;
-    transition: background 0.3s ease;
+    margin: 5px; padding: 8px 12px; border: none; border-radius: 4px;
+    background: #c3b384; color: #736c30; cursor: pointer; transition: background 0.3s ease;
   }
+  #paginacion button:hover { background: #c3b47c5c; }
 
-  #paginacion button:hover { 
-    background: #c3b47c5c; 
+  /* ====== BOTÓN FLOTANTE ====== */
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  text-decoration: none;
+  box-shadow: 2px 5px 15px rgba(0,0,0,0.2);
+  z-index: 10000;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.whatsapp-float:hover {
+  background-color: #128c7e;
+  transform: scale(1.05);
+}
+
+.whatsapp-float img {
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+}
+
+.whatsapp-float span {
+  font-weight: bold;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+
+/* Ocultar el texto en móviles muy pequeños si prefieres solo el icono */
+@media (max-width: 400px) {
+  .whatsapp-float span {
+    display: none;
   }
+  .whatsapp-float {
+    padding: 12px;
+    border-radius: 50%;
+  }
+  .whatsapp-float img {
+    margin-right: 0;
+  }
+}
 
   /* ====== RESPONSIVE ====== */
   @media (max-width: 768px) {
@@ -217,55 +204,69 @@
   }
 
   @media (max-width: 600px) {
-    .catalogo {
-      grid-template-columns: 1fr;
+    /* Buscador ajustado al ancho de página sin cortarse */
+    .buscador {
+      flex-direction: column !important;
+      gap: 10px !important;
+      margin: 15px !important; /* Margen lateral controlado */
+      align-items: stretch !important;
+      box-sizing: border-box !important;
+    }
+
+    .buscador input, 
+    .buscador select {
+      width: 100% !important;
+      max-width: none !important;
+      box-sizing: border-box !important; /* Evita que el padding los ensanche */
+      margin: 0 !important;
+    }
+
+    #catalogo.catalogo { 
+      display: block !important; 
+      padding: 10px !important;
     }
 
     .producto {
-      width: 100%;
-      min-height: 800px; /* más alta que ancha */
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      height: 70vh !important; 
+      min-height: 500px !important;
+      width: 100% !important;
+      margin-bottom: 30px !important;
+      padding: 20px !important;
+      box-sizing: border-box !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+
+    .carrusel {
+      width: 100% !important;
+      height: 60% !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      margin: auto 0 !important;
     }
 
     .carrusel img {
-      width: 100%;
-      height: auto;
+      width: 100% !important;
+      height: 100% !important;
+      max-height: 350px !important;
+      object-fit: contain !important;
+      background: #f9f9f9;
     }
 
+    .producto h2 { font-size: 1.4rem !important; margin-top: 0 !important; }
+    .producto p { font-size: 1rem !important; margin: 2px 0 !important; }
+    
     .navbar {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .navbar img {
-      margin-bottom: 5px;
-    }
-
-    .navbar a {
-      margin-top: 5px;
-      padding: 6px 10px;
-      font-size: 14px;
-    }
-
-    .buscador {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .buscador input {
-      width: 100%;
-      max-width: none;
-    }
-
-    .buscador select {
-      width: 100%;
-      margin-top: 10px;
+      flex-direction: column !important;
+      gap: 5px;
     }
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 </style>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
@@ -459,5 +460,9 @@
       return parseFloat(precioTexto.replace("Precio:", "").replace("Bs.","").trim());
     }
   </script>
+  <a href="https://wa.link/ybhv7u" class="whatsapp-float" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+    <span>¡Contáctanos!</span>
+  </a>
 </body>
 </html>
