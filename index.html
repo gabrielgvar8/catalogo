@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Catálogo de Ropa</title>
-  <style>
+<style>
   /* ====== ESTILOS GENERALES ====== */
   body { 
     font-family: 'Segoe UI', Arial, sans-serif;
@@ -65,16 +65,16 @@
 
   /* ====== BUSCADOR + ORDENAR ====== */
   .buscador {
-    display: flex;              
-    justify-content: center;    
-    align-items: center;        
-    gap: 15px;                  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
     margin: 20px;
   }
 
   .buscador input {
-    flex: 1;                    
-    max-width: 600px;           
+    flex: 1;
+    max-width: 600px;
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -82,7 +82,7 @@
   }
 
   .buscador select {
-    width: 180px;               
+    width: 180px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -94,7 +94,7 @@
   /* ====== CATÁLOGO EN GRID ====== */
   .catalogo { 
     display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); 
+    grid-template-columns: repeat(auto-fill, minmax(600px, 1fr)); 
     gap: 20px; 
     padding: 20px;
   }
@@ -218,16 +218,16 @@
 
   @media (max-width: 600px) {
     .catalogo {
-      grid-template-columns: 1fr; /* fuerza una sola columna */
+      grid-template-columns: 1fr;
     }
 
     .producto {
-      width: 100%; /* ocupa todo el ancho disponible */
+      width: 100%;
     }
 
     .carrusel img {
-      width: 100%;   /* imagen más grande en móviles */
-      height: auto;  /* ajusta la altura proporcionalmente */
+      width: 100%;
+      height: auto;
     }
 
     .navbar {
@@ -243,6 +243,21 @@
       margin-top: 5px;
       padding: 6px 10px;
       font-size: 14px;
+    }
+
+    .buscador {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .buscador input {
+      width: 100%;
+      max-width: none;
+    }
+
+    .buscador select {
+      width: 100%;
+      margin-top: 10px;
     }
   }
 
