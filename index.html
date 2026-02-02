@@ -4,249 +4,253 @@
   <meta charset="UTF-8">
   <title>Catálogo de Ropa</title>
   <style>
-    /* ====== ESTILOS GENERALES ====== */
-    body { 
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 0;
-      color: #333;
-      background: url("fondo.jpg") no-repeat center center fixed;
-      background-size: cover;
-      position: relative;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(255,255,255,0.4);
-      z-index: -1;
-    }
-
-    /* ====== NAVBAR ====== */
-    .navbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255,255,255,0.9);
-      padding: 10px 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-
-    .navbar img {
-      width: 40px;
-      height: 40px;
-    }
-
-    .navbar h1 {
-      flex-grow: 1;
-      text-align: center;
-      font-size: 1.8em;
-      color: #444;
-      margin: 0;
-    }
-
-    .navbar a {
-      background: #c3b384;
-      color: #736c30;
-      text-decoration: none;
-      padding: 8px 15px;
-      border-radius: 6px;
-      font-weight: bold;
-      transition: background 0.3s ease;
-    }
-
-    .navbar a:hover {
-      background: #c3b47c5c;
-    }
-    /* ====== BUSCADOR + ORDENAR ====== */
-    .buscador {
-      display: flex;              /* activa flexbox */
-      justify-content: center;    /* centra horizontalmente */
-      align-items: center;        /* alinea verticalmente */
-      gap: 15px;                  /* espacio entre buscador y ordenar */
-      margin: 20px;
-    }
-
-    .buscador input {
-      flex: 1;                    /* ocupa todo el espacio disponible */
-      max-width: 600px;           /* límite máximo para que no se extienda demasiado */
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-
-    .buscador select {
-      width: 180px;               /* tamaño fijo */
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 15px;
-      background: #fff;
-      cursor: pointer;
-    }
-
-
-
-    /* ====== CATÁLOGO EN GRID ====== */
-    .catalogo { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); 
-      gap: 20px; 
-      padding: 20px;
-    }
-
-    /* ====== TARJETAS DE PRODUCTO ====== */
-    .producto {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      height: 400px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .producto:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-    }
-
-    /* ====== CARRUSEL CON FLECHAS ====== */
-    .carrusel {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .carrusel img {
-      width: 250px;
-      height: 250px;
-      object-fit: cover;
-      border-radius: 6px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      cursor: pointer;
-    }
-
-    .flecha {
-      background:  #c3b384 ;
-      color: #736c30;
-      border: none;
-      font-size: 20px;
-      padding: 10px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .flecha:hover {
-      background:  #c3b47c5c;
-    }
-
-    /* ====== TEXTOS DE PRODUCTO ====== */
-    .producto h2 { 
-      font-size: 20px; 
-      margin: 10px 0; 
-      color: #222;
-    }
-
-    .producto p { 
-      margin: 5px 0; 
-      font-size: 14px;
-    }
-
-    .producto p strong {
-      color: #736c30;
-    }
-
-    /* ====== LIGHTBOX ====== */
-    .lightbox {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .lightbox img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 8px;
-      box-shadow: 0 0 15px rgba(255,255,255,0.5);
-      cursor: zoom-out;
-    }
-@media (max-width: 600px) {
-  .catalogo {
-    grid-template-columns: 1fr; /* fuerza una sola columna */
+  /* ====== ESTILOS GENERALES ====== */
+  body { 
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    color: #333;
+    background: url("fondo.jpg") no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
   }
 
-  .producto {
-    width: 100%; /* ocupa todo el ancho disponible */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255,255,255,0.4);
+    z-index: -1;
   }
 
-  .carrusel img {
-    width: 100%;   /* imagen más grande en móviles */
-    height: auto;  /* ajusta la altura proporcionalmente */
-  }
-
+  /* ====== NAVBAR ====== */
   .navbar {
-    flex-direction: column;
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.9);
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
   }
 
   .navbar img {
-    margin-bottom: 5px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .navbar h1 {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 1.8em;
+    color: #444;
+    margin: 0;
   }
 
   .navbar a {
-    margin-top: 5px;
-    padding: 6px 10px;
+    background: #c3b384;
+    color: #736c30;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+
+  .navbar a:hover {
+    background: #c3b47c5c;
+  }
+
+  /* ====== BUSCADOR + ORDENAR ====== */
+  .buscador {
+    display: flex;              
+    justify-content: center;    
+    align-items: center;        
+    gap: 15px;                  
+    margin: 20px;
+  }
+
+  .buscador input {
+    flex: 1;                    
+    max-width: 600px;           
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+
+  .buscador select {
+    width: 180px;               
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  /* ====== CATÁLOGO EN GRID ====== */
+  .catalogo { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); 
+    gap: 20px; 
+    padding: 20px;
+  }
+
+  /* ====== TARJETAS DE PRODUCTO ====== */
+  .producto {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .producto:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  }
+
+  /* ====== CARRUSEL CON FLECHAS ====== */
+  .carrusel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .carrusel img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+  }
+
+  .flecha {
+    background:  #c3b384 ;
+    color: #736c30;
+    border: none;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .flecha:hover {
+    background:  #c3b47c5c;
+  }
+
+  /* ====== TEXTOS DE PRODUCTO ====== */
+  .producto h2 { 
+    font-size: 20px; 
+    margin: 10px 0; 
+    color: #222;
+  }
+
+  .producto p { 
+    margin: 5px 0; 
     font-size: 14px;
   }
-}
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    #paginacion { text-align: center; margin: 20px; }
-    #paginacion button {
-      margin: 5px;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 4px;
-      background: #c3b384;
-      color: #736c30;
-      cursor: pointer;
-    }
-    #paginacion button:hover { background: #c3b47c5c; }
-    /* Responsive */
-    @media (max-width: 768px) {
-      .catalogo { grid-template-columns: 1fr; }
-      .carrusel img { width: 180px; height: 180px; }
-      .navbar h1 { font-size: 1.2em; }
-    }
-    @media (max-width: 600px) {
-      .navbar { flex-direction: column; align-items: center; }
-      .navbar img { margin-bottom: 5px; }
-      .navbar a { margin-top: 5px; padding: 6px 10px; font-size: 14px; }
+  .producto p strong {
+    color: #736c30;
+  }
+
+  /* ====== LIGHTBOX ====== */
+  .lightbox {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.5);
+    cursor: zoom-out;
+  }
+
+  /* ====== PAGINACIÓN ====== */
+  #paginacion { 
+    text-align: center; 
+    margin: 20px; 
+  }
+
+  #paginacion button {
+    margin: 5px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    background: #c3b384;
+    color: #736c30;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  #paginacion button:hover { 
+    background: #c3b47c5c; 
+  }
+
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 768px) {
+    .catalogo { grid-template-columns: 1fr; }
+    .carrusel img { width: 180px; height: 180px; }
+    .navbar h1 { font-size: 1.2em; }
+  }
+
+  @media (max-width: 600px) {
+    .catalogo {
+      grid-template-columns: 1fr; /* fuerza una sola columna */
     }
 
-  </style>
+    .producto {
+      width: 100%; /* ocupa todo el ancho disponible */
+    }
+
+    .carrusel img {
+      width: 100%;   /* imagen más grande en móviles */
+      height: auto;  /* ajusta la altura proporcionalmente */
+    }
+
+    .navbar {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .navbar img {
+      margin-bottom: 5px;
+    }
+
+    .navbar a {
+      margin-top: 5px;
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
