@@ -205,217 +205,230 @@
   </div>
 
   <div id="catalogo" class="catalogo"></div>
+
   <div id="paginacion"></div>
 
-  <div id="lightbox" class="lightbox" aria-hidden="true"><img id="lightbox-img" src="" alt=""></div>
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <img id="lightbox-img" src="" alt="">
+  </div>
 
   <a href="https://wa.link/ybhv7u" class="whatsapp-float" target="_blank" rel="noopener">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="wa"><span>Contáctanos</span>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="wa">
+    <span>Contáctanos</span>
   </a>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script>
-  /* ====== Render y lógica completa (robusta) ====== */
+    /* ====== CONFIGURACIÓN Y VARIABLES ====== */
+    let productosPorPagina = 12;
+    let paginaActual = 1;
+    let todosProductos = [];
+    let productosActivos = [];
 
-  // Paginación / listas
-  let productosPorPagina = 12;
-  let paginaActual = 1;
-  let todosProductos = [];
-  let productosActivos = [];
+    /* ====== CARGA DE DATOS (CSV) ====== */
+    Papa.parse("productos.csv", {
+      download: true,
+      header: true,
+      complete: function(results) {
+        const cont = document.getElementById('catalogo');
+        cont.innerHTML = '';
 
-  // Cargar CSV y renderizar tarjetas
-  Papa.parse("productos.csv", {
-    download: true,
-    header: true,
-    complete: function(results) {
-      const cont = document.getElementById('catalogo');
-      cont.innerHTML = '';
+        results.data.forEach((p, idx) => {
+          if (!p.Titulo) return;
+          const div = document.createElement('div');
+          div.className = 'producto';
 
-      results.data.forEach((p, idx) => {
-        if (!p.Titulo) return;
-        const div = document.createElement('div');
-        div.className = 'producto';
+          const imagenes = (p.Imagen || '').replace(/"/g, '').split(',').map(s => s.trim()).filter(Boolean);
+          const firstImg = imagenes[0] || 'https://via.placeholder.com/600x600?text=Sin+imagen';
+          const idCarr = `carr-${idx}`;
 
-        const imagenes = (p.Imagen || '').replace(/"/g,'').split(',').map(s=>s.trim()).filter(Boolean);
-        const firstImg = imagenes[0] || 'https://via.placeholder.com/600x600?text=Sin+imagen';
-        const idCarr = `carr-${idx}`;
+          div.innerHTML = `
+            <h2>${p.Titulo}</h2>
+            <p class="meta">${p.Descripcion || ''}</p>
+            <p class="precio"><strong>Precio:</strong> Bs.${p.Precio || ''}</p>
+            <p class="disponibilidad"><strong>Disponibilidad:</strong> ${p.Disponibilidad || ''}</p>
+            <div class="carrusel" id="${idCarr}">
+              <img class="imagen-carrusel" src="${firstImg}" alt="${p.Titulo}">
+              <div class="controles-carrusel">
+                <button class="flecha izq" type="button" data-carr="${idCarr}" data-dir="-1">◀</button>
+                <span class="contador-fotos">${imagenes.length > 0 ? '1 / ' + imagenes.length : ''}</span>
+                <button class="flecha der" type="button" data-carr="${idCarr}" data-dir="1">▶</button>
+              </div>
+            </div>
+          `;
+          div.dataset.imagenes = JSON.stringify(imagenes);
+          div.dataset.indice = "0";
+          cont.appendChild(div);
+        });
 
-      div.innerHTML = `
-        <h2>${p.Titulo}</h2>
-        <p class="meta">${p.Descripcion || ''}</p>
-        <p class="precio"><strong>Precio:</strong> Bs.${p.Precio || ''}</p>
-        <p class="disponibilidad"><strong>Disponibilidad:</strong> ${p.Disponibilidad || ''}</p>
-        <div class="carrusel" id="${idCarr}">
-          <img class="imagen-carrusel" src="${firstImg}" alt="${p.Titulo}">
-          <div class="controles-carrusel">
-            <button class="flecha izq" type="button" data-carr="${idCarr}" data-dir="-1">◀</button>
-            <span class="contador-fotos">${imagenes.length > 0 ? '1 / ' + imagenes.length : ''}</span>
-            <button class="flecha der" type="button" data-carr="${idCarr}" data-dir="1">▶</button>
-          </div>
-        </div>
-      `;
-        div.dataset.imagenes = JSON.stringify(imagenes);
-        div.dataset.indice = "0";
-        cont.appendChild(div);
+        inicializarListas();
+      },
+      error: () => inicializarListas()
+    });
+
+    /* ====== NAVEGACIÓN Y PAGINACIÓN ====== */
+    function inicializarListas() {
+      todosProductos = Array.from(document.querySelectorAll('.producto'));
+      productosActivos = todosProductos.slice();
+      crearPaginacion(productosActivos.length);
+      mostrarPagina(1);
+    }
+
+    function mostrarPagina(pagina) {
+      const totalPaginas = Math.ceil(productosActivos.length / productosPorPagina);
+      
+      // Validar rango de página
+      if (pagina < 1) pagina = 1;
+      if (pagina > totalPaginas) pagina = totalPaginas;
+      
+      paginaActual = pagina;
+      const inicio = (paginaActual - 1) * productosPorPagina;
+      const fin = paginaActual * productosPorPagina;
+
+      // Ocultar todos y mostrar solo los del rango
+      todosProductos.forEach(el => el.style.display = 'none');
+      productosActivos.forEach((el, idx) => {
+        el.style.display = (idx >= inicio && idx < fin) ? '' : 'none';
       });
 
-      // inicializar listas y UI
-      inicializarListas();
-    },
-    error: function() {
-      // si falla, inicializar listas vacías para evitar errores
-      inicializarListas();
+      actualizarBotonesPaginacion();
+
+      // EFECTO: Volver arriba suavemente
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  });
 
-  // Inicializar listas y paginación
-  function inicializarListas() {
-    todosProductos = Array.from(document.querySelectorAll('.producto'));
-    productosActivos = todosProductos.slice();
-    crearPaginacion(productosActivos.length);
-    mostrarPagina(1);
-  }
+    function crearPaginacion(total) {
+      const totalPag = Math.max(1, Math.ceil(total / productosPorPagina));
+      const pagDiv = document.getElementById('paginacion');
+      pagDiv.innerHTML = '';
 
-  // Mostrar página (no forzar display:flex)
-  function mostrarPagina(pagina) {
-    paginaActual = pagina || 1;
-    const inicio = (paginaActual - 1) * productosPorPagina;
-    const fin = paginaActual * productosPorPagina;
+      // BOTÓN ANTERIOR
+      const btnAnt = document.createElement('button');
+      btnAnt.innerText = '«';
+      btnAnt.id = 'btn-ant';
+      btnAnt.onclick = () => mostrarPagina(paginaActual - 1);
+      pagDiv.appendChild(btnAnt);
 
-    todosProductos.forEach(el => el.style.display = 'none');
-    productosActivos.forEach((el, idx) => {
-      el.style.display = (idx >= inicio && idx < fin) ? '' : 'none';
+      // NÚMEROS DE PÁGINA
+      for (let i = 1; i <= totalPag; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button'; btn.innerText = i; btn.dataset.page = i;
+        btn.onclick = () => mostrarPagina(i);
+        pagDiv.appendChild(btn);
+      }
+
+      // BOTÓN SIGUIENTE
+      const btnSig = document.createElement('button');
+      btnSig.innerText = '»';
+      btnSig.id = 'btn-sig';
+      btnSig.onclick = () => mostrarPagina(paginaActual + 1);
+      pagDiv.appendChild(btnSig);
+
+      actualizarBotonesPaginacion();
+    }
+
+    function actualizarBotonesPaginacion() {
+      const totalPaginas = Math.ceil(productosActivos.length / productosPorPagina);
+      
+      // Actualizar estado de los números
+      document.querySelectorAll('#paginacion button[data-page]').forEach(b => {
+        b.classList.toggle('active', parseInt(b.dataset.page) === paginaActual);
+      });
+
+      // Habilitar/Deshabilitar flechas
+      const btnAnt = document.getElementById('btn-ant');
+      const btnSig = document.getElementById('btn-sig');
+
+      if (btnAnt) btnAnt.disabled = (paginaActual === 1);
+      if (btnSig) btnSig.disabled = (paginaActual === totalPaginas || totalPaginas === 0);
+      
+      // Estilo visual para botones deshabilitados
+      [btnAnt, btnSig].forEach(btn => {
+        if(btn) btn.style.opacity = btn.disabled ? "0.4" : "1";
+      });
+    }
+
+    /* ====== BUSCADOR Y ORDENAMIENTO ====== */
+    document.getElementById('buscador').addEventListener('input', function() {
+      const q = this.value.trim().toLowerCase();
+      productosActivos = q === '' 
+        ? todosProductos.slice() 
+        : todosProductos.filter(p => p.innerText.toLowerCase().includes(q));
+      
+      crearPaginacion(productosActivos.length);
+      mostrarPagina(1);
     });
 
-    actualizarBotonesPaginacion();
-  }
-
-  function crearPaginacion(total) {
-    const totalPag = Math.max(1, Math.ceil(total / productosPorPagina));
-    const pagDiv = document.getElementById('paginacion');
-    pagDiv.innerHTML = '';
-    for (let i=1;i<=totalPag;i++){
-      const btn = document.createElement('button');
-      btn.type='button'; btn.innerText = i; btn.dataset.page = i;
-      btn.addEventListener('click', ()=> mostrarPagina(i));
-      pagDiv.appendChild(btn);
+    function extraerPrecio(el) {
+      const p = el.querySelector('.precio');
+      if (!p) return 0;
+      let txt = p.innerText.toLowerCase()
+        .replace('precio:', '').replace('bs.', '').replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
+      return parseFloat(txt) || 0;
     }
-    actualizarBotonesPaginacion();
-  }
 
-  function actualizarBotonesPaginacion(){
-    const botones = Array.from(document.querySelectorAll('#paginacion button'));
-    botones.forEach(b => {
-      if (parseInt(b.dataset.page,10) === paginaActual) b.classList.add('active');
-      else b.classList.remove('active');
+    document.getElementById('orden').addEventListener('change', function() {
+      const criterio = this.value;
+      const cont = document.getElementById('catalogo');
+      
+      productosActivos.sort((a, b) => {
+        if (criterio === 'titulo') return a.querySelector('h2').innerText.localeCompare(b.querySelector('h2').innerText);
+        const pa = extraerPrecio(a), pb = extraerPrecio(b);
+        return criterio === 'precioAsc' ? pa - pb : pb - pa;
+      });
+
+      productosActivos.forEach(i => cont.appendChild(i));
+      mostrarPagina(1);
     });
-  }
 
-  // Buscador
-  const buscador = document.getElementById('buscador');
-  buscador.addEventListener('input', function(){
-    const q = this.value.trim().toLowerCase();
-    if (!q) productosActivos = todosProductos.slice();
-    else productosActivos = todosProductos.filter(p => p.innerText.toLowerCase().includes(q));
-    crearPaginacion(productosActivos.length);
-    mostrarPagina(1);
-  });
+    /* ====== LÓGICA DEL CARRUSEL ====== */
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button[data-carr]');
+      if (!btn) return;
 
-  // Ordenar
-  const ordenEl = document.getElementById('orden');
-  ordenEl.addEventListener('change', function(){
-    const criterio = this.value;
-    const cont = document.getElementById('catalogo');
-    const lista = productosActivos.length ? productosActivos : todosProductos;
-    lista.sort((a,b) => {
-      if (criterio === 'titulo') return a.querySelector('h2').innerText.localeCompare(b.querySelector('h2').innerText);
-      const pa = extraerPrecio(a), pb = extraerPrecio(b);
-      return criterio === 'precioAsc' ? pa - pb : pb - pa;
+      const id = btn.dataset.carr;
+      const dir = parseInt(btn.dataset.dir);
+      const carr = document.getElementById(id);
+      const tarjeta = carr.closest('.producto');
+      const imgs = JSON.parse(tarjeta.dataset.imagenes || '[]');
+      if (!imgs.length) return;
+
+      let idx = parseInt(tarjeta.dataset.indice);
+      idx = (idx + dir + imgs.length) % imgs.length;
+      tarjeta.dataset.indice = idx;
+
+      const contadorEl = carr.querySelector('.contador-fotos');
+      if (contadorEl) contadorEl.innerText = `${idx + 1} / ${imgs.length}`;
+
+      const imgEl = carr.querySelector('.imagen-carrusel');
+      if (imgEl) {
+        carr.classList.add('loading');
+        imgEl.src = imgs[idx];
+        imgEl.onload = () => carr.classList.remove('loading');
+        imgEl.onerror = () => carr.classList.remove('loading');
+      }
     });
-    lista.forEach(i => cont.appendChild(i));
-    // actualizar referencias
-    if (productosActivos.length) productosActivos = lista.slice();
-    else { todosProductos = lista.slice(); productosActivos = todosProductos.slice(); }
-    crearPaginacion(productosActivos.length);
-    mostrarPagina(1);
-  });
 
-  function extraerPrecio(el){
-    const p = Array.from(el.querySelectorAll('p')).find(x => x.innerText.toLowerCase().includes('precio'));
-    if (!p) return 0;
-    const txt = p.innerText.replace(/[^0-9.,-]/g,'').replace(',','.');
-    return parseFloat(txt) || 0;
-  }
+    /* ====== LIGHTBOX ====== */
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
 
- // Carrusel: delegación de eventos con indicador de carga
-// Carrusel actualizado con Spinner y Contador
-document.addEventListener('click', function(e){
-  const btn = e.target.closest('button[data-carr]');
-  if (btn) {
-    const id = btn.dataset.carr;
-    const dir = parseInt(btn.dataset.dir, 10);
-    const carr = document.getElementById(id);
-    if (!carr) return;
+    document.addEventListener('click', function(e) {
+      const img = e.target.closest('img.imagen-carrusel');
+      if (img) {
+        lightboxImg.src = img.src;
+        lightbox.style.display = 'flex';
+        lightbox.setAttribute('aria-hidden', 'false');
+      }
+    });
 
-    const tarjeta = carr.closest('.producto');
-    const imgs = JSON.parse(tarjeta.dataset.imagenes || '[]');
-    if (!imgs.length) return;
-
-    let idx = parseInt(tarjeta.dataset.indice || '0', 10);
-    idx = (idx + dir + imgs.length) % imgs.length;
-    tarjeta.dataset.indice = idx;
-
-    // ACTUALIZAR CONTADOR
-    const contadorEl = carr.querySelector('.contador-fotos');
-    if (contadorEl) {
-      contadorEl.innerText = `${idx + 1} / ${imgs.length}`;
-    }
-
-    const imgEl = carr.querySelector('.imagen-carrusel');
-    if (imgEl) {
-      carr.classList.add('loading');
-      imgEl.src = imgs[idx];
-      imgEl.onload = () => carr.classList.remove('loading');
-      imgEl.onerror = () => carr.classList.remove('loading');
-    }
-  }
-});
-  // Lightbox: delegación robusta
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightbox-img');
-
-  document.addEventListener('click', function(e){
-    const img = e.target.closest && e.target.closest('img.imagen-carrusel');
-    if (img) {
-      lightboxImg.src = img.src;
-      lightboxImg.alt = img.alt || '';
-      lightbox.style.display = 'flex';
-      lightbox.setAttribute('aria-hidden','false');
-      e.stopPropagation();
-    }
-  });
-
-  lightbox.addEventListener('click', function(e){
-    if (e.target === lightbox || e.target !== lightboxImg) {
-      lightbox.style.display = 'none';
-      lightbox.setAttribute('aria-hidden','true');
-      lightboxImg.src = '';
-    }
-  });
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape' && lightbox.style.display === 'flex') {
-      lightbox.style.display = 'none';
-      lightbox.setAttribute('aria-hidden','true');
-      lightboxImg.src = '';
-    }
-  });
-
-  // Exponer para depuración rápida
-  window._catalog = {
-    todos: () => todosProductos.slice(),
-    activos: () => productosActivos.slice(),
-    mostrarPagina
-  };
+    lightbox.addEventListener('click', (e) => {
+      if (e.target !== lightboxImg) {
+        lightbox.style.display = 'none';
+        lightbox.setAttribute('aria-hidden', 'true');
+        lightboxImg.src = '';
+      }
+    });
   </script>
 </body>
 </html>
