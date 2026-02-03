@@ -5,153 +5,154 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Catálogo MV Clothing - Demo</title>
 
-  <style>
-    /* RESET / BASE */
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      margin: 0;
-      color: #333;
-      background-image: url("fondo.jpg");
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: cover;
-      background-attachment: scroll; /* evitar fixed que rompe móviles */
-      position: relative;
-    }
-    body::before {
-      content: ""; position: fixed; inset: 0;
-      background: rgba(255,255,255,0.35); z-index: -1;
-    }
-
-    /* NAVBAR */
-    .navbar {
-      display:flex; align-items:center; justify-content:space-between;
-      background: rgba(255,255,255,0.95);
-      padding: 10px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      position: sticky; top: 0; z-index: 1000;
-    }
-    .navbar img { width:36px; height:36px; }
-    .navbar h1 { margin:0; font-size:1.1rem; color:#444; flex:1; text-align:center; }
-    .navbar a { background:#c3b384; color:#736c30; padding:8px 12px; border-radius:6px; text-decoration:none; font-weight:600; }
-
-    /* BUSCADOR */
-    .buscador { display:flex; gap:12px; padding:14px; justify-content:center; align-items:center; flex-wrap:wrap; }
-    .buscador input { flex:1; min-width:160px; max-width:600px; padding:10px; border-radius:6px; border:1px solid #ddd; }
-    .buscador select { padding:10px; border-radius:6px; border:1px solid #ddd; }
-
-    /* GRID: 2 columnas escritorio, 1 en móvil */
-    .catalogo {
-      display:grid;
-      grid-template-columns: repeat(2, 1fr); /* 2 columnas por defecto */
-      gap:18px;
-      padding:18px;
-      max-width:1200px;
-      margin:0 auto;
-    }
-    @media (min-width:1400px) { .catalogo { grid-template-columns: repeat(3, 1fr); } }
-
-    /* TARJETA */
-    .producto {
-      background:#fff; border-radius:10px; overflow:hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      display:flex; flex-direction:column; gap:10px;
-      padding:14px; min-height:380px; justify-content:flex-start;
-    }
-    .producto h2 { font-size:1rem; margin:0; line-height:1.2; color:#222; }
-    .meta { color:#555; font-size:0.9rem; margin:0; }
-    .precio { color:#736c30; font-weight:700; font-size:1rem; margin:0; }
-    .disponibilidad { font-size:0.85rem; color:#2a7a2a; margin:0; }
-
-    /* CARRUSEL / IMAGEN */
-    .carrusel { display:flex; align-items:center; justify-content:center; gap:8px; }
-    .imagen-carrusel {
-      width:100%; max-width:320px; height:220px; object-fit:cover; border-radius:6px; display:block; margin:0 auto; background:#f6f6f6;
-    }
-    .flecha { background:#c3b384; color:#736c30; border:none; padding:8px; border-radius:50%; cursor:pointer; }
-
-    /* PAGINACIÓN */
-    #paginacion { text-align:center; padding:12px; }
-    #paginacion button { margin:4px; padding:8px 10px; border-radius:6px; border:none; background:#c3b384; color:#fff; cursor:pointer; font-weight:600; }
-    #paginacion button.active { background:#736c30; color:#fff; transform:translateY(-1px); }
-
-    /* LIGHTBOX */
-    .lightbox { position:fixed; inset:0; display:none; justify-content:center; align-items:center; background:rgba(0,0,0,0.85); z-index:9999; }
-    .lightbox img { max-width:92%; max-height:92%; border-radius:8px; }
-
-    /* WHATSAPP FLOAT */
-    .whatsapp-float { position:fixed; bottom:18px; right:18px; background:#25d366; color:#fff; border-radius:50px; display:flex; align-items:center; padding:10px 14px; text-decoration:none; box-shadow:0 6px 18px rgba(0,0,0,0.15); z-index:10000; }
-    .whatsapp-float img { width:28px; height:28px; margin-right:8px; }
-
-    /* RESPONSIVE: móvil */
-    @media (max-width: 768px) {
-      .catalogo { grid-template-columns: 1fr; padding:12px; gap:12px; }
-      .imagen-carrusel { max-width:260px; height:200px; }
-    }
-
-    /* --- Reemplaza las reglas móviles actuales por estas --- */
-@media (max-width: 600px) {
-  .catalogo { grid-template-columns: 1fr; padding: 12px; gap: 14px; }
-
-  /* tarjeta: altura razonable, sin forzar espacio extra */
-  .producto {
-    min-height: unset;
-    height: 700px;           /* ajusta si quieres 650/800 */
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* evita huecos arriba/abajo */
-    gap: 10px;
-    box-sizing: border-box;
+<style>
+  /* RESET / BASE */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { 
+    height: auto; /* Cambiado de 100% para permitir que el fondo crezca */
+    min-height: 100%; 
   }
-
-  /* contenedor de imagen con proporción fija opcional (evita saltos) */
-  .imagen-wrap {
-    width: 100%;
-    aspect-ratio: 4 / 3;     /* cambia a 3/4 o 1/1 si prefieres otra proporción */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fff;        /* color de fondo para que no se vea transparente */
-    border-radius: 6px;
-    overflow: hidden;
-  }
-
-  /* imagen: mostrar completa, sin márgenes, centrada y sin espacios inline */
-  .imagen-carrusel {
-    display: block;          /* elimina gaps por inline images */
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;     /* muestra la imagen completa */
-    margin: 0 auto;
-    background: transparent;
-    padding: 0;
-    border: 0;
-  }
-
-  /* si no usas .imagen-wrap, aplica esto al contenedor .carrusel */
-  .carrusel {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
     margin: 0;
-    gap: 8px;
+    color: #333;
+    background-image: url("fondo.jpg");
+    
+    /* --- CORRECCIÓN DEL FONDO --- */
+    background-repeat: repeat;      /* Permite que la imagen se repita */
+    background-attachment: fixed;   /* Hace que el fondo se quede quieto mientras el contenido baja */
+    background-size: auto;          /* Evita que se estire demasiado y pierda calidad */
+    /* ---------------------------- */
+
+    position: relative;
+  }
+  body::before {
+    content: ""; 
+    position: fixed; 
+    inset: 0;
+    background: rgba(255,255,255,0.35); 
+    z-index: -1;
   }
 
-  /* eliminar márgenes de párrafos que empujan la imagen */
-  .producto h2, .producto p { margin: 0; padding: 0; }
+  /* NAVBAR */
+  .navbar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(255,255,255,0.95);
+    padding: 10px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    position: sticky; top: 0; z-index: 1000;
+  }
+  .navbar img { width: 36px; height: 36px; }
+  .navbar h1 { margin: 0; font-size: 1.1rem; color: #444; flex: 1; text-align: center; }
+  .navbar a { background: #c3b384; color: #736c30; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-weight: 600; }
 
-  /* asegurar que el bloque de texto inferior no se encoja */
-  .producto > p, .producto > div { flex-shrink: 0; }
-}
+  /* BUSCADOR */
+  .buscador { display: flex; gap: 12px; padding: 14px; justify-content: center; align-items: center; flex-wrap: wrap; }
+  .buscador input { flex: 1; min-width: 160px; max-width: 600px; padding: 10px; border-radius: 6px; border: 1px solid #ddd; }
+  .buscador select { padding: 10px; border-radius: 6px; border: 1px solid #ddd; }
 
-    @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
-  </style>
+  /* GRID */
+  .catalogo {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    padding: 18px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  @media (min-width: 1400px) { .catalogo { grid-template-columns: repeat(3, 1fr); } }
+
+  /* TARJETA PRODUCTO */
+  .producto {
+    background: #fff; border-radius: 10px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 14px; min-height: 400px; justify-content: flex-start;
+  }
+  .producto h2 { font-size: 1rem; margin: 0; line-height: 1.2; color: #222; }
+  .meta { color: #555; font-size: 0.9rem; margin: 0; }
+  .precio { color: #736c30; font-weight: 700; font-size: 1rem; margin: 0; }
+  .disponibilidad { font-size: 0.85rem; color: #2a7a2a; margin: 0; }
+
+  /* CARRUSEL */
+  .carrusel { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 12px; 
+    margin-top: auto;
+  }
+  
+  .imagen-carrusel {
+    width: 100%; 
+    height: 250px; 
+    object-fit: contain; 
+    border-radius: 6px; 
+    background: #f6f6f6;
+    cursor: pointer;
+  }
+
+  .controles-carrusel {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+  }
+
+  .flecha { 
+    background: #c3b384; 
+    color: #736c30; 
+    border: none; 
+    padding: 6px 20px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  /* PAGINACIÓN */
+  #paginacion { 
+    text-align: center; 
+    padding: 20px 12px 80px 12px; 
+  }
+  #paginacion button { margin: 4px; padding: 8px 12px; border-radius: 6px; border: none; background: #c3b384; color: #fff; cursor: pointer; font-weight: 600; }
+  #paginacion button.active { background: #736c30; color: #fff; transform: translateY(-1px); }
+
+  /* LIGHTBOX */
+  .lightbox { position: fixed; inset: 0; display: none; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); z-index: 9999; }
+  .lightbox img { max-width: 92%; max-height: 92%; border-radius: 8px; }
+
+  /* WHATSAPP FLOAT */
+  .whatsapp-float { 
+    position: fixed; 
+    bottom: 20px; 
+    right: 20px; 
+    background: #25d366; 
+    color: #fff; 
+    border-radius: 50px; 
+    display: flex; 
+    align-items: center; 
+    padding: 10px 14px; 
+    text-decoration: none; 
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25); 
+    z-index: 10000;
+  }
+  .whatsapp-float img { width: 28px; height: 28px; margin-right: 8px; }
+
+  /* RESPONSIVE MÓVIL */
+  @media (max-width: 600px) {
+    .catalogo { grid-template-columns: 1fr; padding: 12px; gap: 14px; }
+    .producto { min-height: unset; height: auto; }
+    .imagen-carrusel { height: 220px; }
+    
+    .flecha {
+      padding: 6px 18px;
+      font-size: 0.9rem;
+    }
+    .whatsapp-float span { font-size: 0.9rem; }
+  }
+
+  @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+</style>
 </head>
 <body>
   <div class="navbar">
@@ -205,17 +206,19 @@
         const firstImg = imagenes[0] || 'https://via.placeholder.com/600x600?text=Sin+imagen';
         const idCarr = `carr-${idx}`;
 
-        div.innerHTML = `
-          <h2>${p.Titulo}</h2>
-          <p class="meta">${p.Descripcion || ''}</p>
-          <p class="precio"><strong>Precio:</strong> Bs.${p.Precio || ''}</p>
-          <p class="disponibilidad"><strong>Disponibilidad:</strong> ${p.Disponibilidad || ''}</p>
-          <div class="carrusel" id="${idCarr}">
+      div.innerHTML = `
+        <h2>${p.Titulo}</h2>
+        <p class="meta">${p.Descripcion || ''}</p>
+        <p class="precio"><strong>Precio:</strong> Bs.${p.Precio || ''}</p>
+        <p class="disponibilidad"><strong>Disponibilidad:</strong> ${p.Disponibilidad || ''}</p>
+        <div class="carrusel" id="${idCarr}">
+          <img class="imagen-carrusel" src="${firstImg}" alt="${p.Titulo}">
+          <div class="controles-carrusel">
             <button class="flecha izq" type="button" data-carr="${idCarr}" data-dir="-1">◀</button>
-            <img class="imagen-carrusel" src="${firstImg}" alt="${p.Titulo}">
             <button class="flecha der" type="button" data-carr="${idCarr}" data-dir="1">▶</button>
           </div>
-        `;
+        </div>
+      `;
         div.dataset.imagenes = JSON.stringify(imagenes);
         div.dataset.indice = "0";
         cont.appendChild(div);
