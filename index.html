@@ -152,6 +152,40 @@
   }
 
   @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+  /* Spinner de carga para las imágenes */
+.carrusel {
+  position: relative; /* Necesario para posicionar el spinner */
+}
+
+.carrusel.loading::after {
+  content: "";
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  margin-left: -15px;
+  border: 4px solid rgba(195, 179, 132, 0.3);
+  border-top-color: #736c30;
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+  z-index: 5;
+}
+.contador-fotos {
+  font-size: 0.85rem;
+  color: #736c30;
+  margin-top: 5px;
+  font-weight: 700;
+}
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+/* Opcional: opacidad baja en la imagen mientras carga */
+.carrusel.loading .imagen-carrusel {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+}
 </style>
 </head>
 <body>
@@ -215,6 +249,7 @@
           <img class="imagen-carrusel" src="${firstImg}" alt="${p.Titulo}">
           <div class="controles-carrusel">
             <button class="flecha izq" type="button" data-carr="${idCarr}" data-dir="-1">◀</button>
+            <span class="contador-fotos">${imagenes.length > 0 ? '1 / ' + imagenes.length : ''}</span>
             <button class="flecha der" type="button" data-carr="${idCarr}" data-dir="1">▶</button>
           </div>
         </div>
@@ -312,25 +347,39 @@
     return parseFloat(txt) || 0;
   }
 
-  // Carrusel: delegación de eventos para flechas
-  document.addEventListener('click', function(e){
-    const btn = e.target.closest('button[data-carr]');
-    if (btn) {
-      const id = btn.dataset.carr;
-      const dir = parseInt(btn.dataset.dir,10);
-      const carr = document.getElementById(id);
-      if (!carr) return;
-      const tarjeta = carr.closest('.producto');
-      const imgs = JSON.parse(tarjeta.dataset.imagenes || '[]');
-      if (!imgs.length) return;
-      let idx = parseInt(tarjeta.dataset.indice || '0',10);
-      idx = (idx + dir + imgs.length) % imgs.length;
-      tarjeta.dataset.indice = idx;
-      const imgEl = carr.querySelector('.imagen-carrusel');
-      if (imgEl) imgEl.src = imgs[idx] || imgEl.src;
-    }
-  });
+ // Carrusel: delegación de eventos con indicador de carga
+// Carrusel actualizado con Spinner y Contador
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('button[data-carr]');
+  if (btn) {
+    const id = btn.dataset.carr;
+    const dir = parseInt(btn.dataset.dir, 10);
+    const carr = document.getElementById(id);
+    if (!carr) return;
 
+    const tarjeta = carr.closest('.producto');
+    const imgs = JSON.parse(tarjeta.dataset.imagenes || '[]');
+    if (!imgs.length) return;
+
+    let idx = parseInt(tarjeta.dataset.indice || '0', 10);
+    idx = (idx + dir + imgs.length) % imgs.length;
+    tarjeta.dataset.indice = idx;
+
+    // ACTUALIZAR CONTADOR
+    const contadorEl = carr.querySelector('.contador-fotos');
+    if (contadorEl) {
+      contadorEl.innerText = `${idx + 1} / ${imgs.length}`;
+    }
+
+    const imgEl = carr.querySelector('.imagen-carrusel');
+    if (imgEl) {
+      carr.classList.add('loading');
+      imgEl.src = imgs[idx];
+      imgEl.onload = () => carr.classList.remove('loading');
+      imgEl.onerror = () => carr.classList.remove('loading');
+    }
+  }
+});
   // Lightbox: delegación robusta
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
